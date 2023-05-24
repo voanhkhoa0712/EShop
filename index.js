@@ -20,20 +20,7 @@ app.engine(
 
 app.set("view engine", "hbs");
 
-app.get("/createTables", (req, res) => {
-  let models = require("./models");
-  models.sequelize.sync().then(() => {
-    res.send("Tables created.");
-  });
-});
-
-app.get("/", (req, res) => {
-  res.render("index");
-});
-
-app.get("/:page", (req, res) => {
-  res.render(req.params.page);
-});
+app.use("/", require("./routes/indexRouter"));
 
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
