@@ -6,6 +6,8 @@ const port = process.env.PORT || 3000;
 
 const expressHandlebars = require("express-handlebars");
 
+const { createStarList } = require("./controllers/handlebarsHelper");
+
 app.use(express.static(__dirname + "/public"));
 
 app.engine(
@@ -15,6 +17,12 @@ app.engine(
     partialsDir: __dirname + "/views/partials",
     extname: "hbs",
     defaultLayout: "layout",
+    runtimeOptions: {
+      allowProtoPropertiesByDefault: true,
+    },
+    helpers: {
+      createStarList,
+    },
   })
 );
 
