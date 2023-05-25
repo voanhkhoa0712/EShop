@@ -20,8 +20,10 @@
             <div class="row">
               <div class="col-md-8">
                 <div class="product-search">
-                  <input type="email" value="Search" />
-                  <button><i class="fa fa-search"></i></button>
+                  <form action="/products" method="GET">
+                    <input type="text" placeholder="Search" name="keyword" required/>
+                    <button><i class="fa fa-search"></i></button>
+                  </form>
                 </div>
               </div>
               <div class="col-md-4">
@@ -31,10 +33,11 @@
                       href="#"
                       class="dropdown-toggle"
                       data-toggle="dropdown"
-                    >Product short by</a>
+                    >Product short by {{sort}}</a>
                     <div class="dropdown-menu dropdown-menu-right">
-                      <a href="#" class="dropdown-item">Newest</a>
-                      <a href="#" class="dropdown-item">Popular</a>
+                      <a href="{{originalUrl}}&sort=price" class="dropdown-item">Price</a>
+                      <a href="{{originalUrl}}&sort=newest" class="dropdown-item">Newest</a>
+                      <a href="{{originalUrl}}&sort=popular" class="dropdown-item">Popular</a>
                     </div>
                   </div>
                 </div>
