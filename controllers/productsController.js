@@ -35,6 +35,9 @@ controller.show = async (req, res) => {
   const sort = ["price", "newest", "popular"].includes(req.query.sort)
     ? req.query.sort
     : "price";
+  const page = isNaN(req.query.page)
+    ? 1
+    : Math.max(1, parseInt(req.query.page));
 
   // Default filter
   const productFilter = {
@@ -73,8 +76,20 @@ controller.show = async (req, res) => {
     res.locals.originalUrl = res.locals.originalUrl + "?";
   }
 
-  const products = await models.Product.findAll(productFilter);
-  res.locals.products = products;
+  const pageLimit = 6;
+  productFilter.limit = pageLimit;
+  productFilter.offset = pageLimit * (page - 1);
+
+  const { rows, count } = await models.Product.findAndCountAll(productFilter);
+
+  res.locals.pagination = {
+    page: page,
+    limit: pageLimit,
+    totalRows: count,
+    queryParams: req.query,
+  };
+
+  res.locals.products = rows;
 
   res.render("product-list");
 };
