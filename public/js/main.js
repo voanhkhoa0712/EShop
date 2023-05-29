@@ -171,11 +171,11 @@
   });
 
   // Shipping address show hide
-  $(".checkout #shipto").change(function () {
+  $(".checkout #ship-to-different-address").change(function () {
     if ($(this).is(":checked")) {
-      $(".checkout .shipping-address").slideDown();
+      $(".checkout .different-address").slideDown();
     } else {
-      $(".checkout .shipping-address").slideUp();
+      $(".checkout .different-address").slideUp();
     }
   });
 

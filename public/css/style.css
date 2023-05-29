@@ -1185,19 +1185,19 @@ button.btn {
   padding: 60px 0;
 }
 
-.checkout .billing-address,
-.checkout .shipping-address {
+.checkout .shipping-address,
+.checkout .different-address {
   position: relative;
   width: 100%;
 }
 
-.checkout .shipping-address {
+.checkout .different-address {
   display: none;
   margin-top: 30px;
 }
 
-.checkout .billing-address h2,
-.checkout .shipping-address h2 {
+.checkout .shipping-address h2,
+.checkout .different-address h2 {
   color: #666666;
   font-size: 30px;
   font-weight: 700;

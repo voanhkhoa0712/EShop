@@ -14,10 +14,10 @@
     "dialect": "postgres"
   },
   "production": {
-    "username": "username",
-    "password": "password",
-    "database": "databasee",
-    "host": "host",
+    "username": "postgres",
+    "password": "postgres",
+    "database": "eshopDB",
+    "host": "127.0.0.1",
     "dialect": "postgres",
     "dialectOptions": {
       "ssl": {

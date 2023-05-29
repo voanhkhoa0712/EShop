@@ -61,14 +61,15 @@ app.use((req, res, next) => {
 // Setup routes
 app.use("/", require("./routes/indexRouter"));
 app.use("/products", require("./routes/productsRouter"));
+app.use("/users", require("./routes/usersRouter"));
 
 app.use((req, res, next) => {
-  res.status(404).render("error", { message: "File not Found!" });
+  res.status(404).render("message", { message: "File not Found!" });
 });
 
 app.use((error, req, res, next) => {
   console.error(error);
-  res.status(500).render("error", { message: "Internal Server Error" });
+  res.status(500).render("message", { message: "Internal Server Error" });
 });
 
 app.listen(port, () => {
