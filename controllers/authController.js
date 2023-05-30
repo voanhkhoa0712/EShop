@@ -9,6 +9,7 @@ controller.show = (req, res) => {
 
 controller.login = (req, res, next) => {
   const keepSignedIn = req.body.keepSignedIn;
+  const cart = req.session.cart;
 
   passport.authenticate("local-login", (err, user) => {
     if (err) return next(err);
@@ -17,14 +18,18 @@ controller.login = (req, res, next) => {
     req.logIn(user, (err) => {
       if (err) return next(err);
       req.session.cookie.maxAge = keepSignedIn ? 24 * 60 * 60 * 1000 : null;
+      req.session.cart = cart;
       return res.redirect("/users/my-account");
     });
   })(req, res, next);
 };
 
 controller.logout = (req, res, next) => {
+  const cart = req.session.cart;
+
   req.logout((err) => {
     if (err) return next(err);
+    req.session.cart = cart;
     res.redirect("/");
   });
 };
