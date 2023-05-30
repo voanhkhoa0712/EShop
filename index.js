@@ -4,10 +4,15 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
-const session = require("express-session");
 
 const expressHandlebars = require("express-handlebars");
 const { createPagination } = require("express-handlebars-paginate");
+
+const session = require("express-session");
+const passport = require("./controllers/passport");
+const flash = require("connect-flash");
+
+const { createStarList } = require("./controllers/handlebarsHelper");
 
 // Setup Redis session
 const redisStore = require("connect-redis").default;
@@ -17,8 +22,7 @@ const redisClient = createClient({
 });
 redisClient.connect().catch(console.error);
 
-const { createStarList } = require("./controllers/handlebarsHelper");
-
+// Setup public static folder
 app.use(express.static(__dirname + "/public"));
 
 // Setup Handlebars templater
@@ -59,8 +63,17 @@ app.use(
   })
 );
 
-// Setup cart middleware
+// Setup passport for login
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Setup connect-flash for session error warning
+app.use(flash());
+
+// Setup init middleware
 app.use((req, res, next) => {
+  res.locals.isLoggedIn = req.isAuthenticated();
+
   const Cart = require("./controllers/cart");
   req.session.cart = new Cart(req.session.cart ? req.session.cart : {});
   res.locals.quantity = req.session.cart.quantity;
@@ -71,8 +84,10 @@ app.use((req, res, next) => {
 // Setup routes
 app.use("/", require("./routes/indexRouter"));
 app.use("/products", require("./routes/productsRouter"));
+app.use("/users", require("./routes/authRouter"));
 app.use("/users", require("./routes/usersRouter"));
 
+// Handle error routes
 app.use((req, res, next) => {
   res.status(404).render("message", { message: "File not Found!" });
 });
