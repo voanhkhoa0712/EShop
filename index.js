@@ -1,4 +1,5 @@
 "use strict";
+require("dotenv").config();
 
 const express = require("express");
 const app = express();
@@ -12,8 +13,7 @@ const { createPagination } = require("express-handlebars-paginate");
 const redisStore = require("connect-redis").default;
 const { createClient } = require("redis");
 const redisClient = createClient({
-  // url: "rediss://red-chqo4fe4dad3eolfifig:QqktULTPXPu0K1iTpJFtf7GkzgEZBMm0@singapore-redis.render.com:6379",
-  url: "redis://red-chqo4fe4dad3eolfifig:6379",
+  url: process.env.REDIS_URL,
 });
 redisClient.connect().catch(console.error);
 
@@ -48,7 +48,7 @@ app.use(express.urlencoded({ extended: false }));
 // Setup session
 app.use(
   session({
-    secret: "53creT",
+    secret: process.env.SESSION_SECRET,
     store: new redisStore({ client: redisClient }),
     resave: false,
     saveUninitialized: false,
