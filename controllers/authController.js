@@ -2,6 +2,7 @@
 
 const controller = {};
 const passport = require("./passport");
+const models = require("../models");
 
 controller.show = (req, res) => {
   if (req.isAuthenticated()) return res.redirect("/");
@@ -60,6 +61,60 @@ controller.register = (req, res, next) => {
       res.redirect(reqUrl);
     });
   })(req, res, next);
+};
+
+controller.showForgotPassword = (req, res) => {
+  res.render("forgot-password");
+};
+
+controller.forgotPassword = async (req, res) => {
+  const email = req.body.email;
+
+  // Check if user exist
+  const user = await models.User.findOne({ where: { email } });
+  if (user) {
+    const { sign } = require("./jwt");
+    const host = req.header("host");
+    const resetLink = `${req.protocol}://${host}/users/reset?token=${sign(
+      email
+    )}&email=${email}`;
+
+    const { sendForgotPasswordMail } = require("./mail");
+    sendForgotPasswordMail(user, host, resetLink)
+      .then((result) => {
+        console.log("Email has been sent");
+        return res.render("forgot-password", { done: true });
+      })
+      .catch((error) => {
+        console.log(error.statusCode);
+        return res.render("forgot-password", {
+          message: "An error has occured when sending to your email!",
+        });
+      });
+  } else {
+    return res.render("forgot-password", { message: "Email does not exist" });
+  }
+};
+
+controller.showResetPassword = (req, res) => {
+  const email = req.query.email;
+  const token = req.query.token;
+  const { verify } = require("./jwt");
+  if (!token || !verify(token)) {
+    return res.render("reset-password", { expired: true });
+  } else {
+    return res.render("reset-password", { email, token });
+  }
+};
+
+controller.resetPassword = async (req, res) => {
+  const email = req.body.email;
+  const token = req.body.token;
+  const bcrypt = require("bcrypt");
+  const password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(8));
+
+  await models.User.update({ password }, { where: { email } });
+  res.render("reset-password", { done: true });
 };
 
 module.exports = controller;
